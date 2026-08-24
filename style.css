@@ -1,0 +1,166 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    padding: 40px 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.total-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+total-box p {
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.total-box h2 {
+    font-size: 30px;
+}
+
+.form-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.form-box input,
+.form-box select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.form-box button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: black;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.expense-list {
+ background: white;
+ margin-top: 20px;
+ padding: 20px;
+ border-radius: 10px;
+}
+
+.expense-list h2 {
+    margin-bottom: 15px;
+}
+
+#expenses > div {
+    padding: 15px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.expense-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.expense-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#addExpense {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.expense-right button {
+    padding: 7px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#clearExpenses {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#addExpense:hover {
+    transform: translateY(-2px);
+}
+
+#clearExpenses:hover {
+    transform: translateY(-2px);
+}
+
+.expense-right button:hover {
+    transform: translateY(-2px);
+}
+
+#addExpense,
+#clearExpenses,
+.expense-right button {
+    transition: transform 0.2s;
+}
+
+input:focus,
+select:focus{
+    outline: none;
+    border: 2px solid;
+}
+
+input,
+select{
+    transition: border 0.2s;
+}
+
+
+@media(max-width:600px) {
+    .expense-card{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .expense-right{
+        width: 100%;
+        justify-content: space-between;
+    }
+}
