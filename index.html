@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="container">
 
@@ -16,18 +18,10 @@
             <h2 id="totalExpense">₹0</h2>
         </div>
         <div class="form-box">
-             <input 
-                type="text" 
-                id="expenseTitle" 
-                placeholder="Expense title"
-            >
-            <input 
-                type="number" 
-                id="expenseAmount" 
-                placeholder="Amount"
-                >
+            <input type="text" id="expenseTitle" placeholder="Expense title">
+            <input type="number" id="expenseAmount" placeholder="Amount">
 
-            
+
 
             <select id="expenseCategory">
                 <option value="Food">Food</option>
@@ -37,6 +31,10 @@
             </select>
 
             <button id="addExpense">Add Expense</button>
+            <p id="editMessage" style="display: none;">
+                ✏️ Editing Expense
+            </p>
+            <button id="cancelEdit" style="display: none;">Cancel Edit</button>
             <button id="clearExpenses">Clear All</button>
         </div>
 
