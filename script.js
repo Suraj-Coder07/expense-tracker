@@ -12,6 +12,14 @@ const cancelEdit = document.getElementById("cancelEdit");
 
 const editMessage = document.getElementById("editMessage");
 
+const totalTransactions = document.getElementById("totalTransactions");
+const highestExpense = document.getElementById("highestExpense");
+const averageExpense = document.getElementById("averageExpense");
+
+const monthFilter = document.getElementById("monthFilter");
+
+const categorySummary = document.getElementById("categorySummary");
+
 let clearExpenses = document.getElementById("clearExpenses");
 
 const filterCategory = document.getElementById("filterCategory");
@@ -21,7 +29,13 @@ const searchExpense = document.getElementById("searchExpense")
 const sortExpenses = document.getElementById("sortExpenses");
 
 
+monthFilter.addEventListener("change", function() {
 
+    renderExpenses();
+    updateTotal();
+    updateCategorySummary();
+
+});
 
 let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 
@@ -33,6 +47,23 @@ function getFilteredExpenses() {
             return expense.category === filterCategory.value;
         });
     }
+
+    if (monthFilter.value !== "all") {
+
+    filteredExpenses = filteredExpenses.filter(function (expense) {
+
+        const date = new Date(expense.date);
+
+        const month = date.toLocaleString("en-US", {
+            month: "long",
+            year: "numeric"
+        });
+
+        return month === monthFilter.value;
+
+    });
+
+}
 
     const searchText = searchExpense.value.toLowerCase();
 
@@ -65,11 +96,96 @@ function updateTotal() {
     }, 0);
 
     document.getElementById("totalExpense").textContent = `₹${total}`;
+
+    totalTransactions.textContent = filteredExpenses.length;
+
+    let highest = 0;
+
+    filteredExpenses.forEach(function (expense) {
+        if (Number(expense.amount) > highest) {
+            highest = Number(expense.amount);
+        }
+    })
+    highestExpense.textContent = `₹${highest}`;
+
+    let average = 0;
+
+    if (filteredExpenses.length > 0) {
+        average = total / filteredExpenses.length;
+    }
+    averageExpense.textContent = `₹${average.toFixed(2)}`;
+}
+
+function updateCategorySummary() {
+
+    const categoryTotals = {};
+
+    const filteredExpenses = getFilteredExpenses();
+
+filteredExpenses.forEach(function(expense) {
+
+    const category = expense.category;
+    const amount = Number(expense.amount);
+
+    if(categoryTotals[category]) {
+        categoryTotals[category] += amount;
+    } else {
+        categoryTotals[category] = amount;
+    }
+
+});
+
+categorySummary.innerHTML = "";
+
+for (const category in categoryTotals) {
+
+    const categoryElement = document.createElement("p");
+
+    categoryElement.textContent =
+        `${category}: ₹${categoryTotals[category]}`;
+
+    categorySummary.appendChild(categoryElement);
+}
+
 }
 
 function saveExpenses() {
     localStorage.setItem("expenses", JSON.stringify(expenses));
     console.log("Saved:", localStorage.getItem("expenses"));
+}
+
+function updateMonthFilter() {
+
+    const months = [];
+
+    expenses.forEach(function (expense) {
+
+        const date = new Date(expense.date);
+
+        const month = date.toLocaleString("en-US", {
+            month: "long",
+            year: "numeric"
+        });
+
+        if (!months.includes(month)) {
+            months.push(month);
+        }
+
+    });
+
+    monthFilter.innerHTML = `<option value="all">All Months</option>`;
+
+    months.forEach(function (month) {
+
+        const option = document.createElement("option");
+
+        option.value = month;
+        option.textContent = month;
+
+        monthFilter.appendChild(option);
+
+    });
+
 }
 
 function renderExpenses() {
@@ -206,6 +322,8 @@ addExpense.addEventListener('click', () => {
         saveExpenses();
         renderExpenses();
         updateTotal();
+        updateMonthFilter();
+        updateCategorySummary();
 
         return;
     }
@@ -251,4 +369,6 @@ clearExpenses.addEventListener("click", () => {
 
 renderExpenses();
 updateTotal();
+updateMonthFilter();
+updateCategorySummary();
 

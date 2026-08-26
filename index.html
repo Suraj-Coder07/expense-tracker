@@ -17,6 +17,28 @@
             <p>Total Expense</p>
             <h2 id="totalExpense">₹0</h2>
         </div>
+
+        <div class="total-box">
+            <p>Total Transactions</p>
+            <h2 id="totalTransactions">0</h2>
+        </div>
+
+        <div class="total-box">
+            <p>Highest Expense</p>
+            <h2 id="highestExpense">₹0</h2>
+        </div>
+
+        <div class="total-box">
+            <p>Average Expense</p>
+            <h2 id="averageExpense">₹0</h2>
+        </div>
+
+        <div class="category-summary">
+            <h3>Category-wise Spending</h3>
+
+            <div id="categorySummary"></div>
+        </div>
+
         <div class="form-box">
             <input type="text" id="expenseTitle" placeholder="Expense title">
             <input type="number" id="expenseAmount" placeholder="Amount">
@@ -51,10 +73,18 @@
                 <option value="Other">Other</option>
             </select>
 
+            <!-- <label for="monthFilter">Month:</label> -->
+
+            <select id="monthFilter">
+                <option value="all">All Months</option>
+            </select>
+
             <select id="sortExpenses">
                 <option value="latest">Latest First</option>
                 <option value="oldest">Oldest First</option>
             </select>
+
+
 
             <div id="expenses">
 
