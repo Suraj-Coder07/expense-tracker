@@ -28,8 +28,10 @@ const searchExpense = document.getElementById("searchExpense")
 
 const sortExpenses = document.getElementById("sortExpenses");
 
+const categoryChart = document.getElementById("categoryChart");
 
-monthFilter.addEventListener("change", function() {
+
+monthFilter.addEventListener("change", function () {
 
     renderExpenses();
     updateTotal();
@@ -40,7 +42,7 @@ monthFilter.addEventListener("change", function() {
 let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 
 function getFilteredExpenses() {
-    let filteredExpenses = expenses;
+    let filteredExpenses = [...expenses];
 
     if (filterCategory.value !== "All") {
         filteredExpenses = filteredExpenses.filter(function (expense) {
@@ -50,20 +52,20 @@ function getFilteredExpenses() {
 
     if (monthFilter.value !== "all") {
 
-    filteredExpenses = filteredExpenses.filter(function (expense) {
+        filteredExpenses = filteredExpenses.filter(function (expense) {
 
-        const date = new Date(expense.date);
+            const date = new Date(expense.date);
 
-        const month = date.toLocaleString("en-US", {
-            month: "long",
-            year: "numeric"
+            const month = date.toLocaleString("en-US", {
+                month: "long",
+                year: "numeric"
+            });
+
+            return month === monthFilter.value;
+
         });
 
-        return month === monthFilter.value;
-
-    });
-
-}
+    }
 
     const searchText = searchExpense.value.toLowerCase();
 
@@ -122,30 +124,68 @@ function updateCategorySummary() {
 
     const filteredExpenses = getFilteredExpenses();
 
-filteredExpenses.forEach(function(expense) {
+    filteredExpenses.forEach(function (expense) {
 
-    const category = expense.category;
-    const amount = Number(expense.amount);
+        const category = expense.category;
+        const amount = Number(expense.amount);
 
-    if(categoryTotals[category]) {
-        categoryTotals[category] += amount;
-    } else {
-        categoryTotals[category] = amount;
+        if (categoryTotals[category]) {
+            categoryTotals[category] += amount;
+        } else {
+            categoryTotals[category] = amount;
+        }
+
+    });
+
+    let maxAmount = 0;
+
+    for (const category in categoryTotals) {
+
+        if (categoryTotals[category] > maxAmount) {
+            maxAmount = categoryTotals[category];
+        }
+
     }
 
-});
+    categoryChart.innerHTML = "";
 
-categorySummary.innerHTML = "";
+if (maxAmount === 0) {
+    return;
+}
+
+    categoryChart.innerHTML = "";
 
 for (const category in categoryTotals) {
 
-    const categoryElement = document.createElement("p");
+    const barContainer = document.createElement("div");
 
-    categoryElement.textContent =
-        `${category}: ₹${categoryTotals[category]}`;
+    const bar = document.createElement("div");
 
-    categorySummary.appendChild(categoryElement);
+    const percentage = (categoryTotals[category] / maxAmount) * 100;
+
+    bar.style.width = `${percentage}%`;
+
+    barContainer.textContent = category;
+    bar.textContent = `₹${categoryTotals[category]}`;
+
+    barContainer.appendChild(bar);
+
+    categoryChart.appendChild(barContainer);
 }
+
+    categorySummary.innerHTML = "";
+
+    
+
+    for (const category in categoryTotals) {
+
+        const categoryElement = document.createElement("p");
+
+        categoryElement.textContent =
+            `${category}: ₹${categoryTotals[category]}`;
+
+        categorySummary.appendChild(categoryElement);
+    }
 
 }
 
@@ -271,17 +311,20 @@ cancelEdit.addEventListener("click", function () {
 filterCategory.addEventListener("change", function () {
     renderExpenses();
     updateTotal();
+    updateCategorySummary();
 });
 
 sortExpenses.addEventListener("change", function () {
     renderExpenses();
     updateTotal();
+
 })
 
 
 searchExpense.addEventListener("input", function () {
     renderExpenses();
     updateTotal();
+    updateCategorySummary();
 });
 
 addExpense.addEventListener('click', () => {

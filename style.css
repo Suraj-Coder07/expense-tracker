@@ -6,161 +6,358 @@
 
 body {
     font-family: Arial, sans-serif;
-    background: #f2f2f2;
-    padding: 40px 20px;
+    background: #f4f6f8;
+    color: #222;
+    padding: 30px 20px;
 }
 
 .container {
     width: 100%;
-    max-width: 500px;
+    max-width: 1000px;
     margin: auto;
 }
 
 h1 {
     text-align: center;
+    font-size: 36px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* =========================
+DASHBOARD
+========================= */
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
     margin-bottom: 25px;
 }
 
 .total-box {
     background: white;
-    padding: 20px;
-    border-radius: 10px;
+    padding: 22px 15px;
+    border-radius: 12px;
     text-align: center;
-    margin-bottom: 20px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-total-box p {
+.total-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.total-box p {
     color: #666;
-    margin-bottom: 8px;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
 .total-box h2 {
-    font-size: 30px;
+    font-size: 25px;
 }
+
+/* =========================
+FORM
+========================= */
 
 .form-box {
     background: white;
-    padding: 20px;
-    border-radius: 10px;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.form-box h2 {
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 15px;
 }
 
 .form-box input,
 .form-box select {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
+    padding: 12px 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    font-size: 15px;
+    background: white;
+    transition: border 0.2s, box-shadow 0.2s;
 }
 
+.form-box input:focus,
+.form-box select:focus {
+    outline: none;
+    border-color: #222;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border: 2px solid #222;
+}
+
+/* =========================
+BUTTONS
+========================= */
+
 .form-box button {
-    width: 100%;
-    padding: 12px;
+    padding: 11px 18px;
     border: none;
-    border-radius: 6px;
-    background: black;
+    border-radius: 7px;
+    background: #222;
     color: white;
-    font-size: 16px;
+    font-size: 15px;
     cursor: pointer;
+    margin-right: 8px;
+    transition: 0.2s;
+}
+
+.form-box button:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+#cancelEdit {
+    background: #777;
+}
+
+#clearExpenses {
+    background: #c0392b;
+}
+
+#editMessage {
+    margin-bottom: 12px;
+    color: #555;
+}
+
+/* =========================
+SUMMARY
+========================= */
+
+.summary-box {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.summary-box h2 {
     margin-bottom: 20px;
 }
 
+.category-summary h3 {
+    margin-bottom: 12px;
+}
+
+.category-summary p {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+/* =========================
+CATEGORY CHART
+========================= */
+
+.category-chart {
+    margin-top: 20px;
+}
+
+.category-chart>div {
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.category-chart>div>div {
+    padding: 9px 12px;
+    margin-top: 5px;
+    background: #222;
+    color: white;
+    border-radius: 6px;
+    min-width: 60px;
+    transition: width 0.3s;
+}
+
+/* =========================
+EXPENSE LIST
+========================= */
+
 .expense-list {
- background: white;
- margin-top: 20px;
- padding: 20px;
- border-radius: 10px;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.expense-list-header {
+    margin-bottom: 18px;
 }
 
 .expense-list h2 {
-    margin-bottom: 15px;
+    margin-bottom: 0;
 }
 
-#expenses > div {
-    padding: 15px;
-    margin-bottom: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+.filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
 }
+
+.filters input,
+.filters select {
+    height: 44px;
+}
+
+/* =========================
+EXPENSE CARD
+========================= */
 
 .expense-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
+    padding: 16px;
     margin-bottom: 12px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    background: #fafafa;
+}
+
+.expense-info h3 {
+    margin-bottom: 5px;
+}
+
+.expense-info p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.expense-info small {
+    color: #999;
 }
 
 .expense-right {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
 }
 
-#addExpense {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
+.expense-right strong {
+    font-size: 17px;
 }
 
 .expense-right button {
     padding: 7px 12px;
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#clearExpenses {
-    padding: 10px 20px;
-    border: none;
     border-radius: 6px;
     cursor: pointer;
-}
-
-#addExpense:hover {
-    transform: translateY(-2px);
-}
-
-#clearExpenses:hover {
-    transform: translateY(-2px);
+    background: #222;
+    color: white;
+    transition: 0.2s;
 }
 
 .expense-right button:hover {
     transform: translateY(-2px);
 }
 
-#addExpense,
-#clearExpenses,
+.expense-right .delete-btn {
+    background: #c0392b;
+}
+
+/* =========================
+MOBILE
+========================= */
+
+@media (max-width: 800px) {
+
+
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filters {
+        grid-template-columns: 1fr 1fr;
+    }
+
+
+
+
+    @media (max-width: 600px) {
+
+        body {
+            padding: 20px 12px;
+        }
+
+        h1 {
+            font-size: 28px;
+        }
+
+        .stats-container {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .filters {
+            grid-template-columns: 1fr;
+        }
+
+        .expense-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .expense-right {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .form-box button {
+            width: 100%;
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+
+    }
+}
+
+.expense-right .edit-btn {
+    background: #333;
+}
+
+.expense-right .delete-btn {
+    background: #c0392b;
+}
+
 .expense-right button {
-    transition: transform 0.2s;
+    min-width: 65px;
 }
 
-input:focus,
-select:focus{
-    outline: none;
-    border: 2px solid;
-}
-
-input,
-select{
-    transition: border 0.2s;
-}
-
-
-@media(max-width:600px) {
-    .expense-card{
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-
-    .expense-right{
-        width: 100%;
-        justify-content: space-between;
-    }
+.expense-right button:active {
+    transform: scale(0.96);
 }
