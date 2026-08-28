@@ -1,10 +1,10 @@
-let titleInput = document.getElementById('expenseTitle');
-let amountInput = document.getElementById('expenseAmount');
-let categoryInput = document.getElementById('expenseCategory');
+const amountInput = document.getElementById('expenseAmount');
+const categoryInput = document.getElementById('expenseCategory');
+const titleInput = document.getElementById('expenseTitle');
 
 const expensesContainer = document.getElementById("expenses");
 
-let addExpense = document.getElementById('addExpense');
+const addExpense = document.getElementById('addExpense');
 
 let editingExpenseId = null;
 
@@ -20,7 +20,7 @@ const monthFilter = document.getElementById("monthFilter");
 
 const categorySummary = document.getElementById("categorySummary");
 
-let clearExpenses = document.getElementById("clearExpenses");
+const clearExpenses = document.getElementById("clearExpenses");
 
 const filterCategory = document.getElementById("filterCategory");
 
@@ -32,11 +32,7 @@ const categoryChart = document.getElementById("categoryChart");
 
 
 monthFilter.addEventListener("change", function () {
-
-    renderExpenses();
-    updateTotal();
-    updateCategorySummary();
-
+    updateUI();
 });
 
 let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
@@ -149,33 +145,33 @@ function updateCategorySummary() {
 
     categoryChart.innerHTML = "";
 
-if (maxAmount === 0) {
-    return;
-}
+    if (maxAmount === 0) {
+        return;
+    }
 
-    categoryChart.innerHTML = "";
+    // categoryChart.innerHTML = "";
 
-for (const category in categoryTotals) {
+    for (const category in categoryTotals) {
 
-    const barContainer = document.createElement("div");
+        const barContainer = document.createElement("div");
 
-    const bar = document.createElement("div");
+        const bar = document.createElement("div");
 
-    const percentage = (categoryTotals[category] / maxAmount) * 100;
+        const percentage = (categoryTotals[category] / maxAmount) * 100;
 
-    bar.style.width = `${percentage}%`;
+        bar.style.width = `${percentage}%`;
 
-    barContainer.textContent = category;
-    bar.textContent = `₹${categoryTotals[category]}`;
+        barContainer.textContent = category;
+        bar.textContent = `₹${categoryTotals[category]}`;
 
-    barContainer.appendChild(bar);
+        barContainer.appendChild(bar);
 
-    categoryChart.appendChild(barContainer);
-}
+        categoryChart.appendChild(barContainer);
+    }
 
     categorySummary.innerHTML = "";
 
-    
+
 
     for (const category in categoryTotals) {
 
@@ -187,6 +183,12 @@ for (const category in categoryTotals) {
         categorySummary.appendChild(categoryElement);
     }
 
+}
+
+function updateUI() {
+    renderExpenses();
+    updateTotal();
+    updateCategorySummary();
 }
 
 function saveExpenses() {
@@ -225,6 +227,7 @@ function updateMonthFilter() {
         monthFilter.appendChild(option);
 
     });
+    monthFilter.value = "all";
 
 }
 
@@ -235,9 +238,14 @@ function renderExpenses() {
     const filteredExpenses = getFilteredExpenses();
 
     if (filteredExpenses.length === 0) {
-        expensesContainer.innerHTML = "<p>No expenses found</p>"
-        return;
-    }
+    expensesContainer.innerHTML = `
+        <div class="empty-state">
+            <p>No expenses found</p>
+            <small>Add your first expense to get started.</small>
+        </div>
+    `;
+    return;
+}
 
     filteredExpenses.forEach(function (expense) {
 
@@ -271,7 +279,14 @@ function renderExpenses() {
 
             cancelEdit.style.display = "inline-block";
             editMessage.style.display = "block";
-        })
+
+            titleInput.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+            titleInput.focus();
+        });
 
 
         deleteButton.addEventListener("click", function () {
@@ -285,8 +300,8 @@ function renderExpenses() {
             expenses.splice(expenseIndex, 1);
 
             saveExpenses();
-            renderExpenses();
-            updateTotal();
+            updateUI();
+            updateMonthFilter();
 
         });
 
@@ -309,22 +324,17 @@ cancelEdit.addEventListener("click", function () {
 });
 
 filterCategory.addEventListener("change", function () {
-    renderExpenses();
-    updateTotal();
-    updateCategorySummary();
+    updateUI();
 });
 
 sortExpenses.addEventListener("change", function () {
-    renderExpenses();
-    updateTotal();
+    updateUI();
 
 })
 
 
 searchExpense.addEventListener("input", function () {
-    renderExpenses();
-    updateTotal();
-    updateCategorySummary();
+    updateUI();
 });
 
 addExpense.addEventListener('click', () => {
@@ -363,10 +373,8 @@ addExpense.addEventListener('click', () => {
         editMessage.style.display = "none";
 
         saveExpenses();
-        renderExpenses();
-        updateTotal();
+        updateUI();
         updateMonthFilter();
-        updateCategorySummary();
 
         return;
     }
@@ -388,9 +396,8 @@ addExpense.addEventListener('click', () => {
     categoryInput.value = "Food";
 
     saveExpenses();
-
-    renderExpenses();
-    updateTotal();
+    updateUI();
+    updateMonthFilter();
 
 
 
@@ -406,8 +413,10 @@ clearExpenses.addEventListener("click", () => {
     expenses.length = 0;
 
     localStorage.removeItem("expenses");
-    renderExpenses();
-    updateTotal();
+    saveExpenses();
+
+    updateUI();
+    updateMonthFilter();
 })
 
 renderExpenses();
