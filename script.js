@@ -144,6 +144,7 @@ function updateCategorySummary() {
     }
 
     categoryChart.innerHTML = "";
+    categorySummary.innerHTML = "";
 
     if (maxAmount === 0) {
         return;
@@ -169,7 +170,7 @@ function updateCategorySummary() {
         categoryChart.appendChild(barContainer);
     }
 
-    categorySummary.innerHTML = "";
+    // categorySummary.innerHTML = "";
 
 
 
@@ -404,7 +405,13 @@ addExpense.addEventListener('click', () => {
 })
 
 clearExpenses.addEventListener("click", () => {
-    const confirmClear = confirm("Are you aure you want to delete all expenses?");
+
+    if (expenses.length === 0) {
+        alert("There are no expenses to clear.");
+        return;
+    }
+
+    const confirmClear = confirm("Are you sure you want to delete all expenses?");
 
     if (!confirmClear) {
         return;
@@ -413,11 +420,14 @@ clearExpenses.addEventListener("click", () => {
     expenses.length = 0;
 
     localStorage.removeItem("expenses");
+
     saveExpenses();
 
     updateUI();
+
     updateMonthFilter();
-})
+
+});
 
 renderExpenses();
 updateTotal();
