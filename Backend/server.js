@@ -1,10 +1,14 @@
 const express = require("express");
 
+const cors = require("cors");
+
 const app = express();
 
 const expenses = [];
 
 app.use(express.json())
+
+app.use(cors());
 
 app.get("/", (req, res) => {
     console.log(req.method);
@@ -22,26 +26,61 @@ app.post("/expenses", (req, res) => {
     expenses.push(expense);
     console.log(expense)
 
-    res.status(200).json({
+    res.status(201).json({
         message: "Expense received successfully",
         expense
     });
 });
 
 app.delete("/expenses/:id", (req, res) => {
-    const id = req.params.id;
+    const id = Number(req.params.id);
 
-    if(id < 0 || id >= expenses.length){
+    const expenseIndex = expenses.findIndex(function(expense) {
+        return expense.id === id;
+    });
+
+    if(expenseIndex === -1) {
         return res.status(404).json({
             message: "Expense not found"
         })
     }
 
-    expenses.splice(id, 1)
+    expenses.splice(expenseIndex, 1)
 
     res.status(200).json({
         message: "Expense Deleted successfully"
     })
+})
+
+app.delete("/expenses", (req, res) => {
+    expenses.length = 0;
+
+    res.status(200).json({
+        message: "All expenses deleted successfully"
+    });
+})
+
+app.patch("/expenses/:id", (req, res) => {
+    const id = Number(req.params.id);
+
+    const expense = expenses.find(function (expense){
+        return expense.id === id;
+    });
+
+    if(!expense){
+        return res.status(404).json({
+            message: "Expense not found"
+        });
+    }
+
+    expense.title = req.body.title;
+    expense.amount = req.body.amount;
+    expense.category = req.body.category;
+
+    res.status(200).json({
+        message: "Expense Update Successfully",
+        expense
+    });
 })
 
 app.listen(3000, () => {

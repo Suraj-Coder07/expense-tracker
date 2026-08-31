@@ -239,14 +239,14 @@ function renderExpenses() {
     const filteredExpenses = getFilteredExpenses();
 
     if (filteredExpenses.length === 0) {
-    expensesContainer.innerHTML = `
+        expensesContainer.innerHTML = `
         <div class="empty-state">
             <p>No expenses found</p>
             <small>Add your first expense to get started.</small>
         </div>
     `;
-    return;
-}
+        return;
+    }
 
     filteredExpenses.forEach(function (expense) {
 
@@ -290,24 +290,35 @@ function renderExpenses() {
         });
 
 
-        deleteButton.addEventListener("click", function () {
+        deleteButton.addEventListener("click", async function () {
 
             const id = Number(deleteButton.dataset.id);
 
-            const expenseIndex = expenses.findIndex(function (expense) {
-                return expense.id === id;
-            })
+            const response = await fetch(`http://localhost:3000/expenses/${id}`,{
+                method: "DELETE"
+            });
 
-            expenses.splice(expenseIndex, 1);
+            const data = await response.json()
+            console.log(data);
 
-            saveExpenses();
-            updateUI();
-            updateMonthFilter();
+            await getExpenses();
+
+            // const expenseIndex = expenses.findIndex(function (expense) {
+            //     return expense.id === id;
+            // })
+
+            // expenses.splice(expenseIndex, 1);
+
+            // saveExpenses();
+            // updateUI();
+            // updateMonthFilter();
 
         });
 
         expensesContainer.appendChild(expenseElement);
+
     });
+
 }
 
 cancelEdit.addEventListener("click", function () {
@@ -338,7 +349,7 @@ searchExpense.addEventListener("input", function () {
     updateUI();
 });
 
-addExpense.addEventListener('click', () => {
+addExpense.addEventListener('click', async () => {
 
     if (
         titleInput.value.trim() == "" ||
@@ -356,26 +367,51 @@ addExpense.addEventListener('click', () => {
     }
 
     if (editingExpenseId !== null) {
-        const expenseIndex = expenses.findIndex(function (expense) {
-            return expense.id === editingExpenseId;
-        });
 
-        expenses[expenseIndex].title = titleInput.value;
-        expenses[expenseIndex].amount = amount;
-        expenses[expenseIndex].category = categoryInput.value;
+    const updatedExpense = {
+        title: titleInput.value,
+        amount: amount,
+        category: categoryInput.value
+    };
+
+    const response = await fetch(
+        `http://localhost:3000/expenses/${editingExpenseId}`,
+        {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updatedExpense)
+        }
+    );
+
+    const data = await response.json();
+
+    console.log(data);
+
+        // const expenseIndex = expenses.findIndex(function (expense) {
+        //     return expense.id === editingExpenseId;
+        // });
+
+        // expenses[expenseIndex].title = titleInput.value;
+        // expenses[expenseIndex].amount = amount;
+        // expenses[expenseIndex].category = categoryInput.value;
 
         editingExpenseId = null;
-        addExpense.textContent = "Add Expense";
+    addExpense.textContent = "Add Expense";
 
-        titleInput.value = "";
-        amountInput.value = "";
-        categoryInput.value = "Food";
-        cancelEdit.style.display = "none";
-        editMessage.style.display = "none";
+    titleInput.value = "";
+    amountInput.value = "";
+    categoryInput.value = "Food";
+    cancelEdit.style.display = "none";
+    editMessage.style.display = "none";
 
-        saveExpenses();
-        updateUI();
-        updateMonthFilter();
+    await getExpenses()
+
+        // saveExpenses();
+        // updateUI();
+        // updateMonthFilter();
+        // await getExpenses();
 
         return;
     }
@@ -389,6 +425,17 @@ addExpense.addEventListener('click', () => {
         category: categoryInput.value,
         date: new Date().toISOString()
     }
+
+    const response = await fetch("http://localhost:3000/expenses", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(expense)
+    });
+
+    const data = await response.json()
+    console.log(data);
 
     expenses.push(expense);
 
@@ -404,7 +451,7 @@ addExpense.addEventListener('click', () => {
 
 })
 
-clearExpenses.addEventListener("click", () => {
+clearExpenses.addEventListener("click", async () => {
 
     if (expenses.length === 0) {
         alert("There are no expenses to clear.");
@@ -417,15 +464,24 @@ clearExpenses.addEventListener("click", () => {
         return;
     }
 
-    expenses.length = 0;
+    const response = await fetch("http://localhost:3000/expenses", {
+        method: "DELETE"
+    });
 
-    localStorage.removeItem("expenses");
+    const data = await response.json()
+    console.log(data);
 
-    saveExpenses();
+    await getExpenses();
 
-    updateUI();
+    // expenses.length = 0;
 
-    updateMonthFilter();
+    // localStorage.removeItem("expenses");
+
+    // saveExpenses();
+
+    // updateUI();
+
+    // updateMonthFilter();
 
 });
 
@@ -434,3 +490,38 @@ updateTotal();
 updateMonthFilter();
 updateCategorySummary();
 
+
+async function getExpenses() {
+    const response = await fetch("http://localhost:3000/expenses");
+
+    const data = await response.json();
+
+    expenses.length = 0;
+    expenses.push(...data)
+
+    updateUI();
+    updateMonthFilter();
+}
+
+getExpenses();
+
+// async function addExpenseToBackend(){
+//     const expense = {
+//         title: "Lunch",
+//         amount: 500,
+//         category: "Food"
+//     }
+
+//     const response = await fetch("http://localhost:3000/expenses", {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json"
+//         },
+//         body: JSON.stringify(expense)
+//     });
+
+//     const data = await response.json();
+//     console.log(data);
+// }
+
+// addExpenseToBackend();
