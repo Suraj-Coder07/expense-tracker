@@ -1,8 +1,20 @@
+require("dotenv").config();
+const mongoose = require("mongoose") 
+
 const express = require("express");
 
 const cors = require("cors");
 
 const app = express();
+
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log("MongoDB connect successfully");
+    })
+    .catch((error) =>{
+        console.log("MongoDB connection error:", error);
+    });
+
 
 const expenses = [];
 
