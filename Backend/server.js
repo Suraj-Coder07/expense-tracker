@@ -1,9 +1,9 @@
-require("dotenv").config();
-const mongoose = require("mongoose") 
-
 const express = require("express");
-
 const cors = require("cors");
+require("dotenv").config();
+const mongoose = require("mongoose");
+const Expense = require("./models/Expense");
+
 
 const app = express();
 
@@ -28,20 +28,38 @@ app.get("/", (req, res) => {
     res.send("Expense Tracker Backend is Working!");
 });
 
-app.get("/expenses", (req, res) => {
-    res.json(expenses);
+app.get("/expenses", async (req, res) => {
+    try {
+        const expenses = await Expense.find().sort({date: -1});
+
+        res.json(expenses);
+    }catch(error) {
+        console.log(error);
+
+        res.status(500).json({
+            message: "Failed to fetch expenses"
+        });
+    }
 });
 
-app.post("/expenses", (req, res) => {
-    const expense = req.body
+app.post("/expenses", async (req, res) => {
+    try {
+        const expense = await Expense.create(req.body);
 
-    expenses.push(expense);
-    console.log(expense)
+        console.log("MongoDB me save hua:", expense);
 
-    res.status(201).json({
-        message: "Expense received successfully",
-        expense
-    });
+        res.status(201).json({
+            message: "Expense saved successfully",
+            expense
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        res.status(500).json({
+            message: "Failed to save expense"
+        });
+    }
 });
 
 app.delete("/expenses/:id", (req, res) => {
