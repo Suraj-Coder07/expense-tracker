@@ -35,7 +35,7 @@ monthFilter.addEventListener("change", function () {
     updateUI();
 });
 
-let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+let expenses = [];
 
 function getFilteredExpenses() {
     let filteredExpenses = [...expenses];
@@ -150,8 +150,6 @@ function updateCategorySummary() {
         return;
     }
 
-    // categoryChart.innerHTML = "";
-
     for (const category in categoryTotals) {
 
         const barContainer = document.createElement("div");
@@ -170,10 +168,6 @@ function updateCategorySummary() {
         categoryChart.appendChild(barContainer);
     }
 
-    // categorySummary.innerHTML = "";
-
-
-
     for (const category in categoryTotals) {
 
         const categoryElement = document.createElement("p");
@@ -190,11 +184,6 @@ function updateUI() {
     renderExpenses();
     updateTotal();
     updateCategorySummary();
-}
-
-function saveExpenses() {
-    localStorage.setItem("expenses", JSON.stringify(expenses));
-    console.log("Saved:", localStorage.getItem("expenses"));
 }
 
 function updateMonthFilter() {
@@ -303,16 +292,6 @@ function renderExpenses() {
 
             await getExpenses();
 
-            // const expenseIndex = expenses.findIndex(function (expense) {
-            //     return expense.id === id;
-            // })
-
-            // expenses.splice(expenseIndex, 1);
-
-            // saveExpenses();
-            // updateUI();
-            // updateMonthFilter();
-
         });
 
         expensesContainer.appendChild(expenseElement);
@@ -389,14 +368,6 @@ addExpense.addEventListener('click', async () => {
 
     console.log(data);
 
-        // const expenseIndex = expenses.findIndex(function (expense) {
-        //     return expense.id === editingExpenseId;
-        // });
-
-        // expenses[expenseIndex].title = titleInput.value;
-        // expenses[expenseIndex].amount = amount;
-        // expenses[expenseIndex].category = categoryInput.value;
-
         editingExpenseId = null;
     addExpense.textContent = "Add Expense";
 
@@ -407,16 +378,8 @@ addExpense.addEventListener('click', async () => {
     editMessage.style.display = "none";
 
     await getExpenses()
-
-        // saveExpenses();
-        // updateUI();
-        // updateMonthFilter();
-        // await getExpenses();
-
         return;
     }
-
-
 
     const expense = {
         id: Date.now(),
@@ -437,17 +400,11 @@ addExpense.addEventListener('click', async () => {
     const data = await response.json()
     console.log(data);
 
-    expenses.push(expense);
-
     titleInput.value = "";
     amountInput.value = "";
     categoryInput.value = "Food";
 
-    saveExpenses();
-    updateUI();
-    updateMonthFilter();
-
-
+    await getExpenses();
 
 })
 
@@ -473,16 +430,6 @@ clearExpenses.addEventListener("click", async () => {
 
     await getExpenses();
 
-    // expenses.length = 0;
-
-    // localStorage.removeItem("expenses");
-
-    // saveExpenses();
-
-    // updateUI();
-
-    // updateMonthFilter();
-
 });
 
 renderExpenses();
@@ -504,24 +451,3 @@ async function getExpenses() {
 }
 
 getExpenses();
-
-// async function addExpenseToBackend(){
-//     const expense = {
-//         title: "Lunch",
-//         amount: 500,
-//         category: "Food"
-//     }
-
-//     const response = await fetch("http://localhost:3000/expenses", {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify(expense)
-//     });
-
-//     const data = await response.json();
-//     console.log(data);
-// }
-
-// addExpenseToBackend();

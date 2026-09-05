@@ -11,7 +11,7 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log("MongoDB connect successfully");
     })
-    .catch((error) =>{
+    .catch((error) => {
         console.log("MongoDB connection error:", error);
     });
 
@@ -30,10 +30,10 @@ app.get("/", (req, res) => {
 
 app.get("/expenses", async (req, res) => {
     try {
-        const expenses = await Expense.find().sort({date: -1});
+        const expenses = await Expense.find().sort({ date: -1 });
 
         res.json(expenses);
-    }catch(error) {
+    } catch (error) {
         console.log(error);
 
         res.status(500).json({
@@ -62,56 +62,76 @@ app.post("/expenses", async (req, res) => {
     }
 });
 
-app.delete("/expenses/:id", (req, res) => {
-    const id = Number(req.params.id);
+app.patch("/expenses/:id", async (req, res) => {
+    try {
+        const id = Number(req.params.id)
 
-    const expenseIndex = expenses.findIndex(function(expense) {
-        return expense.id === id;
-    });
+        const updatedExpenses = await Expense.findOneAndUpdate(
+            { id: id },
+            req.body,
+            { returnDocument: "after" }
+        );
 
-    if(expenseIndex === -1) {
-        return res.status(404).json({
-            message: "Expense not found"
+        if (!updatedExpenses) {
+            return res.status(404).json({
+                message: "Expense not found"
+            });
+        }
+        res.status(200).json({
+            message: "Expense updated successfully",
+            expense: updatedExpenses
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        res.status(500).json({
+            message: "Failed to Update expense"
         })
     }
-
-    expenses.splice(expenseIndex, 1)
-
-    res.status(200).json({
-        message: "Expense Deleted successfully"
-    })
 })
 
-app.delete("/expenses", (req, res) => {
-    expenses.length = 0;
+app.delete("/expenses/:id", async (req, res) => {
+    try {
+        const id = Number(req.params.id);
 
-    res.status(200).json({
-        message: "All expenses deleted successfully"
-    });
-})
+        const deletedExpense = await Expense.findOneAndDelete({ id: id });
 
-app.patch("/expenses/:id", (req, res) => {
-    const id = Number(req.params.id);
+        if (!deletedExpense) {
+            res.status(404).json({
+                message: "Expense not found"
+            });
+        }
+        res.status(200).json({
+            message: "Expense deleted successfully",
+            expense: deletedExpense
+        });
 
-    const expense = expenses.find(function (expense){
-        return expense.id === id;
-    });
+    } catch (error) {
+        console.log(error)
 
-    if(!expense){
-        return res.status(404).json({
-            message: "Expense not found"
+        res.status(500).json({
+            message: "Failed to delete expense"
         });
     }
+});
 
-    expense.title = req.body.title;
-    expense.amount = req.body.amount;
-    expense.category = req.body.category;
+app.delete("/expenses", async (req, res) => {
+    try{
+        await Expense.deleteMany({});
 
-    res.status(200).json({
-        message: "Expense Update Successfully",
-        expense
-    });
-})
+        res.status(200).json({
+            message: "All expense deleted successfully"
+        });
+
+    }catch(error){
+        console.log(error);
+
+        res.status(500).json({
+            message: "Failed to delete all Expense"
+        });
+    }
+});
 
 app.listen(3000, () => {
     console.log("Server is running port 3000...")
