@@ -282,15 +282,27 @@ function renderExpenses() {
         deleteButton.addEventListener("click", async function () {
 
             const id = Number(deleteButton.dataset.id);
+            try {
 
-            const response = await fetch(`http://localhost:3000/expenses/${id}`,{
-                method: "DELETE"
-            });
+                const response = await fetch(`http://localhost:3000/expenses/${id}`, {
+                    method: "DELETE"
+                });
 
-            const data = await response.json()
-            console.log(data);
+                if (!response.ok) {
+                    alert("Failed to delete expense");
+                    return;
+                }
 
-            await getExpenses();
+                const data = await response.json()
+                console.log(data);
+
+                await getExpenses();
+
+
+            } catch (errro) {
+                console.log(error);
+                alert("Something went wrong")
+            }
 
         });
 
@@ -347,37 +359,50 @@ addExpense.addEventListener('click', async () => {
 
     if (editingExpenseId !== null) {
 
-    const updatedExpense = {
-        title: titleInput.value,
-        amount: amount,
-        category: categoryInput.value
-    };
+        const updatedExpense = {
+            title: titleInput.value,
+            amount: amount,
+            category: categoryInput.value
+        };
 
-    const response = await fetch(
-        `http://localhost:3000/expenses/${editingExpenseId}`,
-        {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(updatedExpense)
+        try {
+            const response = await fetch(
+                `http://localhost:3000/expenses/${editingExpenseId}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(updatedExpense)
+                }
+            );
+
+            if (!response.ok) {
+                alert("Failed to load expense");
+                return;
+            }
+
+            const data = await response.json();
+
+            console.log(data);
+
+        } catch (error) {
+            console.log(error);
+            alert("Something went wrong");
         }
-    );
 
-    const data = await response.json();
 
-    console.log(data);
 
         editingExpenseId = null;
-    addExpense.textContent = "Add Expense";
+        addExpense.textContent = "Add Expense";
 
-    titleInput.value = "";
-    amountInput.value = "";
-    categoryInput.value = "Food";
-    cancelEdit.style.display = "none";
-    editMessage.style.display = "none";
+        titleInput.value = "";
+        amountInput.value = "";
+        categoryInput.value = "Food";
+        cancelEdit.style.display = "none";
+        editMessage.style.display = "none";
 
-    await getExpenses()
+        await getExpenses()
         return;
     }
 
@@ -389,16 +414,27 @@ addExpense.addEventListener('click', async () => {
         date: new Date().toISOString()
     }
 
-    const response = await fetch("http://localhost:3000/expenses", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(expense)
-    });
+    try {
+        const response = await fetch("http://localhost:3000/expenses", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(expense)
+        });
 
-    const data = await response.json()
-    console.log(data);
+        if (!response.ok) {
+            alert("Failed to add expense");
+            return;
+        }
+
+        const data = await response.json()
+        console.log(data);
+    } catch (error) {
+        console.log(error);
+        alert("Something went wrong");
+    }
+
 
     titleInput.value = "";
     amountInput.value = "";
@@ -421,14 +457,25 @@ clearExpenses.addEventListener("click", async () => {
         return;
     }
 
-    const response = await fetch("http://localhost:3000/expenses", {
-        method: "DELETE"
-    });
+    try {
 
-    const data = await response.json()
-    console.log(data);
+        const response = await fetch("http://localhost:3000/expenses", {
+            method: "DELETE"
+        });
 
-    await getExpenses();
+        if (!response.ok) {
+            alert("Failed to delete all expenses");
+            return;
+        }
+
+        const data = await response.json()
+        console.log(data);
+
+        await getExpenses();
+    } catch (error) {
+        console.log(error);
+        alert("Something went wrong")
+    }
 
 });
 
@@ -439,15 +486,21 @@ updateCategorySummary();
 
 
 async function getExpenses() {
-    const response = await fetch("http://localhost:3000/expenses");
+    try {
+        const response = await fetch("http://localhost:3000/expenses");
 
-    const data = await response.json();
+        const data = await response.json();
 
-    expenses.length = 0;
-    expenses.push(...data)
+        expenses.length = 0;
+        expenses.push(...data)
 
-    updateUI();
-    updateMonthFilter();
+        updateUI();
+        updateMonthFilter();
+    } catch (error) {
+        console.log(error);
+
+        alert("Failed to load expenses");
+    }
 }
 
 getExpenses();

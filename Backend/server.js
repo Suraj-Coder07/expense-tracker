@@ -56,6 +56,12 @@ app.post("/expenses", async (req, res) => {
     } catch (error) {
         console.log(error);
 
+        if(error.name === "ValidationError"){
+            return res.status(400).json({
+                message: "Please enter valid expense details"
+            });
+        }
+
         res.status(500).json({
             message: "Failed to save expense"
         });
@@ -85,6 +91,12 @@ app.patch("/expenses/:id", async (req, res) => {
     } catch (error) {
         console.log(error);
 
+        if(error === "ValidationError"){
+            return res.status(400).json({
+                message: "Please enter valid expense details"
+            });
+        }
+
         res.status(500).json({
             message: "Failed to Update expense"
         })
@@ -98,7 +110,7 @@ app.delete("/expenses/:id", async (req, res) => {
         const deletedExpense = await Expense.findOneAndDelete({ id: id });
 
         if (!deletedExpense) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "Expense not found"
             });
         }
@@ -121,7 +133,7 @@ app.delete("/expenses", async (req, res) => {
         await Expense.deleteMany({});
 
         res.status(200).json({
-            message: "All expense deleted successfully"
+            message: "All expenses deleted successfully"
         });
 
     }catch(error){
