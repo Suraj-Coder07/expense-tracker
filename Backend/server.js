@@ -56,7 +56,7 @@ app.post("/expenses", async (req, res) => {
     } catch (error) {
         console.log(error);
 
-        if(error.name === "ValidationError"){
+        if (error.name === "ValidationError") {
             return res.status(400).json({
                 message: "Please enter valid expense details"
             });
@@ -71,6 +71,12 @@ app.post("/expenses", async (req, res) => {
 app.patch("/expenses/:id", async (req, res) => {
     try {
         const id = Number(req.params.id)
+
+        if (Number.isNaN(id)) {
+            return res.status(400).json({
+                message: "Invalid expense id"
+            });
+        }
 
         const updatedExpenses = await Expense.findOneAndUpdate(
             { id: id },
@@ -91,7 +97,7 @@ app.patch("/expenses/:id", async (req, res) => {
     } catch (error) {
         console.log(error);
 
-        if(error === "ValidationError"){
+        if (error.name === "ValidationError") {
             return res.status(400).json({
                 message: "Please enter valid expense details"
             });
@@ -106,6 +112,12 @@ app.patch("/expenses/:id", async (req, res) => {
 app.delete("/expenses/:id", async (req, res) => {
     try {
         const id = Number(req.params.id);
+
+        if (Number.isNaN(id)) {
+            return res.status(400).json({
+                message: "Invalid expense id"
+            });
+        }
 
         const deletedExpense = await Expense.findOneAndDelete({ id: id });
 
@@ -129,14 +141,14 @@ app.delete("/expenses/:id", async (req, res) => {
 });
 
 app.delete("/expenses", async (req, res) => {
-    try{
+    try {
         await Expense.deleteMany({});
 
         res.status(200).json({
             message: "All expenses deleted successfully"
         });
 
-    }catch(error){
+    } catch (error) {
         console.log(error);
 
         res.status(500).json({

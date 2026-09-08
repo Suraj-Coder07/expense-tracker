@@ -30,6 +30,12 @@ const sortExpenses = document.getElementById("sortExpenses");
 
 const categoryChart = document.getElementById("categoryChart");
 
+const loadingMessage = document.getElementById("loadingMessage");
+const errorMessage = document.getElementById("errorMessage");
+const retryButton = document.getElementById("retryButton");
+
+retryButton.style.display = "none";
+
 
 monthFilter.addEventListener("change", function () {
     updateUI();
@@ -66,7 +72,8 @@ function getFilteredExpenses() {
     const searchText = searchExpense.value.toLowerCase();
 
     filteredExpenses = filteredExpenses.filter(function (expense) {
-        return expense.title.toLowerCase().includes(searchText);
+        return expense.title.toLowerCase().includes(searchText) ||
+            expense.category.toLowerCase().includes(searchText);
     });
 
     if (sortExpenses.value === "latest") {
@@ -93,7 +100,7 @@ function updateTotal() {
         return sum + Number(expense.amount);
     }, 0);
 
-    document.getElementById("totalExpense").textContent = `₹${total}`;
+    document.getElementById("totalExpense").textContent = `₹${total.toFixed(2)}`;
 
     totalTransactions.textContent = filteredExpenses.length;
 
@@ -104,7 +111,7 @@ function updateTotal() {
             highest = Number(expense.amount);
         }
     })
-    highestExpense.textContent = `₹${highest}`;
+    highestExpense.textContent = `₹${highest.toFixed(2)}`;
 
     let average = 0;
 
@@ -143,6 +150,11 @@ function updateCategorySummary() {
 
     }
 
+    const sortedCategories = Object.entries(categoryTotals)
+        .sort(function (a, b) {
+            return b[1] - a[1];
+        });
+
     categoryChart.innerHTML = "";
     categorySummary.innerHTML = "";
 
@@ -150,30 +162,36 @@ function updateCategorySummary() {
         return;
     }
 
-    for (const category in categoryTotals) {
+    const totalSpending = filteredExpenses.reduce(function (sum, expense) {
+        return sum + Number(expense.amount);
+    }, 0);
+
+    for (const [category, amount] of sortedCategories) {
 
         const barContainer = document.createElement("div");
 
         const bar = document.createElement("div");
 
-        const percentage = (categoryTotals[category] / maxAmount) * 100;
+        const totalPercentage = ((amount / totalSpending) * 100).toFixed(1);
 
-        bar.style.width = `${percentage}%`;
+        const barPercentage = (amount / maxAmount) * 100;
+
+        bar.style.width = `${barPercentage}%`;
 
         barContainer.textContent = category;
-        bar.textContent = `₹${categoryTotals[category]}`;
+        bar.textContent = `₹${amount.toFixed(2)} (${totalPercentage}%)`;
 
         barContainer.appendChild(bar);
 
         categoryChart.appendChild(barContainer);
     }
 
-    for (const category in categoryTotals) {
+    for (const [category, amount] of sortedCategories) {
 
         const categoryElement = document.createElement("p");
 
         categoryElement.textContent =
-            `${category}: ₹${categoryTotals[category]}`;
+            `${category}: ₹${amount.toFixed(2)}`;
 
         categorySummary.appendChild(categoryElement);
     }
@@ -228,12 +246,23 @@ function renderExpenses() {
     const filteredExpenses = getFilteredExpenses();
 
     if (filteredExpenses.length === 0) {
-        expensesContainer.innerHTML = `
-        <div class="empty-state">
-            <p>No expenses found</p>
-            <small>Add your first expense to get started.</small>
-        </div>
-    `;
+
+        if (expenses.length === 0) {
+            expensesContainer.innerHTML = `
+            <div class="empty-state">
+                <p>No expenses found</p>
+                <small>Add your first expense to get started.</small>
+            </div>
+        `;
+        } else {
+            expensesContainer.innerHTML = `
+            <div class="empty-state">
+                <p>No matching expenses found</p>
+                <small>Try changing your search or filters.</small>
+            </div>
+        `;
+        }
+
         return;
     }
 
@@ -241,6 +270,7 @@ function renderExpenses() {
 
         const expenseElement = document.createElement("div");
         expenseElement.classList.add('expense-card')
+        expenseElement.classList.add(expense.category.toLowerCase());
 
         expenseElement.innerHTML = `
     <div class="expense-info">
@@ -250,7 +280,7 @@ function renderExpenses() {
     </div>
 
     <div class="expense-right">
-        <strong>₹${expense.amount}</strong>
+        <strong>₹${Number(expense.amount).toFixed(2)}</strong>
         <button class="edit-btn" data-id="${expense.id}">Edit</button>
         <button class="delete-btn" data-id="${expense.id}">Delete</button>
     </div>
@@ -282,6 +312,13 @@ function renderExpenses() {
         deleteButton.addEventListener("click", async function () {
 
             const id = Number(deleteButton.dataset.id);
+
+            const confirmDelete = confirm("Are you sure you want to delete this expense?");
+
+            if (!confirmDelete) {
+                return;
+            }
+
             try {
 
                 const response = await fetch(`http://localhost:3000/expenses/${id}`, {
@@ -484,12 +521,21 @@ updateTotal();
 updateMonthFilter();
 updateCategorySummary();
 
+retryButton.addEventListener("click", () => {
+    getExpenses();
+})
 
 async function getExpenses() {
+    loadingMessage.style.display = "block";
+    errorMessage.style.display = "none";
     try {
         const response = await fetch("http://localhost:3000/expenses");
 
         const data = await response.json();
+
+        errorMessage.style.display = "none";
+        loadingMessage.style.display = "none";
+        retryButton.style.display = "none";
 
         expenses.length = 0;
         expenses.push(...data)
@@ -499,7 +545,11 @@ async function getExpenses() {
     } catch (error) {
         console.log(error);
 
-        alert("Failed to load expenses");
+        errorMessage.textContent = "Failed to load expenses";
+        errorMessage.style.display = "block";
+        retryButton.style.display = "block";
+    } finally {
+        loadingMessage.style.display = "none";
     }
 }
 

@@ -36,7 +36,7 @@ DASHBOARD
 .stats-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
+    gap: 18px;
     margin-bottom: 25px;
 }
 
@@ -62,7 +62,8 @@ DASHBOARD
 }
 
 .total-box h2 {
-    font-size: 25px;
+    font-size: 28px;
+    font-weight: 700;
 }
 
 /* =========================
@@ -189,11 +190,15 @@ CATEGORY CHART
 .category-chart>div>div {
     padding: 9px 12px;
     margin-top: 5px;
-    background: #222;
+    background: #2563eb;
     color: white;
     border-radius: 6px;
     min-width: 60px;
     transition: width 0.3s;
+}
+
+.category-chart>div>div:hover {
+    opacity: 0.9;
 }
 
 /* =========================
@@ -237,11 +242,17 @@ EXPENSE CARD
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px;
+    padding: 18px;
     margin-bottom: 12px;
     border: 1px solid #e5e7eb;
     border-radius: 9px;
     background: #fafafa;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: 0.2s;
+}
+
+.expense-card:hover {
+    transform: translateY(-2px);
 }
 
 .expense-info h3 {
@@ -265,11 +276,11 @@ EXPENSE CARD
 }
 
 .expense-right strong {
-    font-size: 17px;
+    font-size: 20px;
 }
 
 .expense-right button {
-    padding: 7px 12px;
+    padding: 8px 14px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -278,12 +289,41 @@ EXPENSE CARD
     transition: 0.2s;
 }
 
+.expense-right .edit-btn {
+    background: #2563eb;
+    color: white;
+}
+
 .expense-right button:hover {
     transform: translateY(-2px);
 }
 
 .expense-right .delete-btn {
     background: #c0392b;
+}
+
+.expense-right .edit-btn:hover {
+    background: #1d4ed8;
+}
+
+.expense-right .delete-btn:hover {
+    background: #a93226;
+}
+
+.expense-card.food {
+    border-left: 5px solid #22c55e;
+}
+
+.expense-card.travel {
+    border-left: 5px solid #3b82f6;
+}
+
+.expense-card.shopping {
+    border-left: 5px solid #f59e0b;
+}
+
+.expense-card.other {
+    border-left: 5px solid #64748b;
 }
 
 /* =========================
@@ -344,10 +384,6 @@ MOBILE
         }
 
     }
-}
-
-.expense-right .edit-btn {
-    background: #333;
 }
 
 .expense-right .delete-btn {
