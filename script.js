@@ -33,9 +33,104 @@ const categoryChart = document.getElementById("categoryChart");
 const loadingMessage = document.getElementById("loadingMessage");
 const errorMessage = document.getElementById("errorMessage");
 const retryButton = document.getElementById("retryButton");
-
 retryButton.style.display = "none";
 
+const registerName = document.getElementById("registerName");
+const registerEmail = document.getElementById("registerEmail");
+const registerPassword = document.getElementById("registerPassword");
+
+const registerButton = document.getElementById("registerButton");
+
+const authMessage = document.getElementById("authMessage");
+
+const loginEmail = document.getElementById("loginEmail");
+const loginPassword = document.getElementById("loginPassword");
+
+const loginButton = document.getElementById("loginButton");
+
+registerButton.addEventListener("click", async () => {
+
+    const name = registerName.value.trim();
+    const email = registerEmail.value.trim();
+    const password = registerPassword.value;
+
+    if (!name || !email || !password) {
+        authMessage.textContent = "Please fill all fields";
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:3000/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            authMessage.textContent = data.message;
+            return;
+        }
+
+        authMessage.textContent = "Registration successful";
+
+        registerName.value = "";
+        registerEmail.value = "";
+        registerPassword.value = "";
+
+    } catch (error) {
+        console.log(error);
+        authMessage.textContent = "Unable to connect to server";
+    }
+});
+
+loginButton.addEventListener("click", async () => {
+    const email = loginEmail.value.trim();
+    const password = loginPassword.value;
+
+    if (!email || !password) {
+        authMessage.textContent = "Please enter email and password";
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:3000/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
+        const data = await response.json()
+
+        if (!response.ok) {
+            authMessage.textContent = data.message;
+            return;
+        }
+
+        localStorage.setItem("token", data.token);
+
+        authMessage.textContent = "Login Successful";
+
+        loginEmail.value = "";
+        loginPassword.value = "";
+
+    } catch (error) {
+        console.log(error);
+
+        authMessage.textContent = "Unable to connect to server";
+    }
+})
 
 monthFilter.addEventListener("change", function () {
     updateUI();
@@ -322,16 +417,21 @@ function renderExpenses() {
             try {
 
                 const response = await fetch(`http://localhost:3000/expenses/${id}`, {
-                    method: "DELETE"
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+
                 });
 
                 if (!response.ok) {
+                    const data = await response.json();
+                    console.log("Delete error:", data);
                     alert("Failed to delete expense");
                     return;
                 }
 
                 const data = await response.json()
-                console.log(data);
 
                 await getExpenses();
 
@@ -408,7 +508,8 @@ addExpense.addEventListener('click', async () => {
                 {
                     method: "PATCH",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
                     },
                     body: JSON.stringify(updatedExpense)
                 }
@@ -421,7 +522,6 @@ addExpense.addEventListener('click', async () => {
 
             const data = await response.json();
 
-            console.log(data);
 
         } catch (error) {
             console.log(error);
@@ -456,6 +556,7 @@ addExpense.addEventListener('click', async () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify(expense)
         });
@@ -497,7 +598,10 @@ clearExpenses.addEventListener("click", async () => {
     try {
 
         const response = await fetch("http://localhost:3000/expenses", {
-            method: "DELETE"
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
         });
 
         if (!response.ok) {
@@ -529,7 +633,11 @@ async function getExpenses() {
     loadingMessage.style.display = "block";
     errorMessage.style.display = "none";
     try {
-        const response = await fetch("http://localhost:3000/expenses");
+        const response = await fetch("http://localhost:3000/expenses", {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        });
 
         const data = await response.json();
 

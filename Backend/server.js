@@ -6,6 +6,7 @@ const Expense = require("./models/Expense");
 const User = require("./models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require("./middleware/authMiddleware");
 
 
 const app = express();
@@ -31,9 +32,11 @@ app.get("/", (req, res) => {
     res.send("Expense Tracker Backend is Working!");
 });
 
-app.get("/expenses", async (req, res) => {
+app.get("/expenses", authMiddleware, async (req, res) => {
     try {
-        const expenses = await Expense.find().sort({ date: -1 });
+        const expenses = await Expense.find({
+            userId: req.userId
+        }).sort({ date: -1 });
 
         res.json(expenses);
     } catch (error) {
@@ -46,8 +49,8 @@ app.get("/expenses", async (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
-    try{
-        const {name, email, password} = req.body;
+    try {
+        const { name, email, password } = req.body;
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -65,7 +68,7 @@ app.post("/register", async (req, res) => {
             user: safeUser
         });
 
-    }catch(error){
+    } catch (error) {
         console.log(error);
 
         res.status(500).json({
@@ -75,12 +78,12 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-    try{
-        const {email, password} = req.body;
+    try {
+        const { email, password } = req.body;
 
         const user = await User.findOne({ email: email });
 
-        if(!user){
+        if (!user) {
             return res.status(404).json({
                 message: "User not found"
             });
@@ -91,16 +94,16 @@ app.post("/login", async (req, res) => {
             user.password
         );
 
-        if(!isPasswordCorrect){
+        if (!isPasswordCorrect) {
             return res.status(401).json({
                 message: "Invalid password"
             });
         }
 
         const token = jwt.sign(
-            {userId: user._id},
+            { userId: user._id },
             process.env.JWT_SECRET,
-            {expiresIn: "7d"}
+            { expiresIn: "7d" }
         );
 
         res.status(200).json({
@@ -108,8 +111,8 @@ app.post("/login", async (req, res) => {
             token
         });
 
-    }catch(error){
-        console.log(erro)
+    } catch (error) {
+        console.log(error)
 
         res.status(500).json({
             message: "Failed to login "
@@ -117,9 +120,12 @@ app.post("/login", async (req, res) => {
     }
 });
 
-app.post("/expenses", async (req, res) => {
+app.post("/expenses", authMiddleware, async (req, res) => {
     try {
-        const expense = await Expense.create(req.body);
+        const expense = await Expense.create({
+            ...req.body,
+            userId: req.userId
+        });
 
         console.log("MongoDB me save hua:", expense);
 
@@ -143,9 +149,11 @@ app.post("/expenses", async (req, res) => {
     }
 });
 
-app.patch("/expenses/:id", async (req, res) => {
+app.patch("/expenses/:id", authMiddleware, async (req, res) => {
     try {
-        const id = Number(req.params.id)
+        const id = Number(req.params.id);
+        const updateData = { ...req.body };
+        delete updateData.userId;
 
         if (Number.isNaN(id)) {
             return res.status(400).json({
@@ -154,8 +162,11 @@ app.patch("/expenses/:id", async (req, res) => {
         }
 
         const updatedExpenses = await Expense.findOneAndUpdate(
-            { id: id },
-            req.body,
+            {
+                id: id,
+                userId: req.userId
+            },
+            updateData,
             { returnDocument: "after" }
         );
 
@@ -184,7 +195,7 @@ app.patch("/expenses/:id", async (req, res) => {
     }
 })
 
-app.delete("/expenses/:id", async (req, res) => {
+app.delete("/expenses/:id", authMiddleware, async (req, res) => {
     try {
         const id = Number(req.params.id);
 
@@ -194,13 +205,21 @@ app.delete("/expenses/:id", async (req, res) => {
             });
         }
 
-        const deletedExpense = await Expense.findOneAndDelete({ id: id });
+        const deletedExpense = await Expense.findOne({
+            id: id,
+            userId: req.userId
+        });
 
         if (!deletedExpense) {
             return res.status(404).json({
                 message: "Expense not found"
             });
         }
+
+        await Expense.deleteOne({
+            _id: deletedExpense._id
+        });
+
         res.status(200).json({
             message: "Expense deleted successfully",
             expense: deletedExpense
@@ -215,9 +234,11 @@ app.delete("/expenses/:id", async (req, res) => {
     }
 });
 
-app.delete("/expenses", async (req, res) => {
+app.delete("/expenses", authMiddleware, async (req, res) => {
     try {
-        await Expense.deleteMany({});
+        await Expense.deleteMany({
+            userId: req.userId
+        });
 
         res.status(200).json({
             message: "All expenses deleted successfully"

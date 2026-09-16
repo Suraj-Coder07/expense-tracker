@@ -11,140 +11,162 @@
 
 <body>
 
-<div class="container">
+    <div class="auth-box">
 
-    <h1>Expense Tracker</h1>
-    <p class="subtitle">Track your spending and manage your expenses</p>
+        <h2>Create Account</h2>
 
-    <!-- Dashboard Stats -->
-    <div class="stats-container">
+        <input type="text" id="registerName" placeholder="Your name">
 
-        <div class="total-box">
-            <p>Total Expense</p>
-            <h2 id="totalExpense">₹0</h2>
+        <input type="email" id="registerEmail" placeholder="Email">
+
+        <input type="password" id="registerPassword" placeholder="Password">
+
+        <button id="registerButton">Register</button>
+
+        <hr>
+
+        <h2>Login</h2>
+
+        <input type="email" id="loginEmail" placeholder="Email">
+
+        <input type="password" id="loginPassword" placeholder="Password">
+
+        <button id="loginButton">Login</button>
+
+        <p id="authMessage"></p>
+
+    </div>
+
+    <div class="container">
+
+        <h1>Expense Tracker</h1>
+        <p class="subtitle">Track your spending and manage your expenses</p>
+
+        <!-- Dashboard Stats -->
+        <div class="stats-container">
+
+            <div class="total-box">
+                <p>Total Expense</p>
+                <h2 id="totalExpense">₹0</h2>
+            </div>
+
+            <div class="total-box">
+                <p>Total Transactions</p>
+                <h2 id="totalTransactions">0</h2>
+            </div>
+
+            <div class="total-box">
+                <p>Highest Expense</p>
+                <h2 id="highestExpense">₹0</h2>
+            </div>
+
+            <div class="total-box">
+                <p>Average Expense</p>
+                <h2 id="averageExpense">₹0</h2>
+            </div>
+
         </div>
 
-        <div class="total-box">
-            <p>Total Transactions</p>
-            <h2 id="totalTransactions">0</h2>
+
+        <!-- Add Expense -->
+        <div class="form-box">
+
+            <h2>Add Expense</h2>
+
+            <div class="form-grid">
+
+                <input type="text" id="expenseTitle" placeholder="Expense title">
+
+                <input type="number" id="expenseAmount" placeholder="Amount">
+
+                <select id="expenseCategory">
+                    <option value="Food">Food</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Other">Other</option>
+                </select>
+
+            </div>
+
+            <button id="addExpense">Add Expense</button>
+
+            <p id="editMessage" style="display: none;">
+                ✏️ Editing Expense
+            </p>
+
+            <button id="cancelEdit" style="display: none;">
+                Cancel Edit
+            </button>
+
+            <button id="clearExpenses">
+                Clear All
+            </button>
+
         </div>
 
-        <div class="total-box">
-            <p>Highest Expense</p>
-            <h2 id="highestExpense">₹0</h2>
+
+        <!-- Spending Summary -->
+        <div class="summary-box">
+
+            <h2>Spending Summary</h2>
+
+            <div class="category-summary">
+
+                <h3>Category-wise Spending</h3>
+
+                <div id="categorySummary"></div>
+
+            </div>
+
+            <div class="category-chart" id="categoryChart"></div>
+
         </div>
 
-        <div class="total-box">
-            <p>Average Expense</p>
-            <h2 id="averageExpense">₹0</h2>
+
+        <!-- Expense List -->
+        <div class="expense-list">
+
+            <div class="expense-list-header">
+                <h2>Expenses</h2>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="filters">
+
+                <input type="text" id="searchExpense" placeholder="Search Expense...">
+
+                <select id="filterCategory">
+                    <option value="All">All Categories</option>
+                    <option value="Food">Food</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <select id="monthFilter">
+                    <option value="all">All Months</option>
+                </select>
+
+                <select id="sortExpenses">
+                    <option value="latest">Latest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+
+            </div>
+
+
+            <!-- Expenses -->
+            <p id="loadingMessage">Loading expenses...</p>
+            <p id="errorMessage"></p>
+            <button id="retryButton">Retry</button>
+
+            <div id="expenses"></div>
+
         </div>
 
     </div>
 
-
-    <!-- Add Expense -->
-    <div class="form-box">
-
-        <h2>Add Expense</h2>
-
-        <div class="form-grid">
-
-            <input type="text" id="expenseTitle" placeholder="Expense title">
-
-            <input type="number" id="expenseAmount" placeholder="Amount">
-
-            <select id="expenseCategory">
-                <option value="Food">Food</option>
-                <option value="Travel">Travel</option>
-                <option value="Shopping">Shopping</option>
-                <option value="Other">Other</option>
-            </select>
-
-        </div>
-
-        <button id="addExpense">Add Expense</button>
-
-        <p id="editMessage" style="display: none;">
-            ✏️ Editing Expense
-        </p>
-
-        <button id="cancelEdit" style="display: none;">
-            Cancel Edit
-        </button>
-
-        <button id="clearExpenses">
-            Clear All
-        </button>
-
-    </div>
-
-
-    <!-- Spending Summary -->
-    <div class="summary-box">
-
-        <h2>Spending Summary</h2>
-
-        <div class="category-summary">
-
-            <h3>Category-wise Spending</h3>
-
-            <div id="categorySummary"></div>
-
-        </div>
-
-        <div class="category-chart" id="categoryChart"></div>
-
-    </div>
-
-
-    <!-- Expense List -->
-    <div class="expense-list">
-
-        <div class="expense-list-header">
-            <h2>Expenses</h2>
-        </div>
-
-        <!-- Search and Filters -->
-        <div class="filters">
-
-            <input
-                type="text"
-                id="searchExpense"
-                placeholder="Search Expense..."
-            >
-
-            <select id="filterCategory">
-                <option value="All">All Categories</option>
-                <option value="Food">Food</option>
-                <option value="Travel">Travel</option>
-                <option value="Shopping">Shopping</option>
-                <option value="Other">Other</option>
-            </select>
-
-            <select id="monthFilter">
-                <option value="all">All Months</option>
-            </select>
-
-            <select id="sortExpenses">
-                <option value="latest">Latest First</option>
-                <option value="oldest">Oldest First</option>
-            </select>
-
-        </div>
-
-
-        <!-- Expenses -->
-        <p id="loadingMessage">Loading expenses...</p>
-        <p id="errorMessage"></p>
-        <button id="retryButton">Retry</button>
-        
-        <div id="expenses"></div>
-
-    </div>
-
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 
 </body>
 
