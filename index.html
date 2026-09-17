@@ -11,33 +11,76 @@
 
 <body>
 
-    <div class="auth-box">
+   <div class="auth-box">
 
-        <h2>Create Account</h2>
+    <!-- Login Form -->
+    <div id="loginForm">
 
-        <input type="text" id="registerName" placeholder="Your name">
+        <h2>Welcome Back</h2>
 
-        <input type="email" id="registerEmail" placeholder="Email">
+        <input
+            type="email"
+            id="loginEmail"
+            placeholder="Email"
+        >
 
-        <input type="password" id="registerPassword" placeholder="Password">
-
-        <button id="registerButton">Register</button>
-
-        <hr>
-
-        <h2>Login</h2>
-
-        <input type="email" id="loginEmail" placeholder="Email">
-
-        <input type="password" id="loginPassword" placeholder="Password">
+        <input
+            type="password"
+            id="loginPassword"
+            placeholder="Password"
+        >
 
         <button id="loginButton">Login</button>
 
-        <p id="authMessage"></p>
+        <p>
+            Don't have an account?
+            <button id="showRegisterButton" type="button">
+                Register
+            </button>
+        </p>
 
     </div>
 
-    <div class="container">
+
+    <!-- Register Form -->
+    <div id="registerForm" style="display: none;">
+
+        <h2>Create Account</h2>
+
+        <input
+            type="text"
+            id="registerName"
+            placeholder="Your name"
+        >
+
+        <input
+            type="email"
+            id="registerEmail"
+            placeholder="Email"
+        >
+
+        <input
+            type="password"
+            id="registerPassword"
+            placeholder="Password"
+        >
+
+        <button id="registerButton">Register</button>
+
+        <p>
+            Already have an account?
+            <button id="showLoginButton" type="button">
+                Login
+            </button>
+        </p>
+
+    </div>
+
+
+    <p id="authMessage"></p>
+
+</div>
+    <div class="container" id="dashboard" style="display: none;">
 
         <h1>Expense Tracker</h1>
         <p class="subtitle">Track your spending and manage your expenses</p>
@@ -101,6 +144,7 @@
             <button id="clearExpenses">
                 Clear All
             </button>
+            <button id="logoutButton">Logout</button>
 
         </div>
 

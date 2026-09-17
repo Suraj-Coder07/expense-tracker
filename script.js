@@ -48,6 +48,31 @@ const loginPassword = document.getElementById("loginPassword");
 
 const loginButton = document.getElementById("loginButton");
 
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+
+const showRegisterButton = document.getElementById("showRegisterButton");
+const showLoginButton = document.getElementById("showLoginButton");
+
+const authBox = document.querySelector(".auth-box");
+const dashboard = document.getElementById("dashboard");
+const logoutButton = document.getElementById("logoutButton");
+
+logoutButton.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    location.reload();
+});
+
+showRegisterButton.addEventListener("click", () => {
+    loginForm.style.display = "none";
+    registerForm.style.display = "block";
+});
+
+showLoginButton.addEventListener("click", () => {
+    registerForm.style.display = "none";
+    loginForm.style.display = "block";
+});
+
 registerButton.addEventListener("click", async () => {
 
     const name = registerName.value.trim();
@@ -80,6 +105,7 @@ registerButton.addEventListener("click", async () => {
         }
 
         authMessage.textContent = "Registration successful";
+        authMessage.className = "auth-success";
 
         registerName.value = "";
         registerEmail.value = "";
@@ -120,7 +146,10 @@ loginButton.addEventListener("click", async () => {
 
         localStorage.setItem("token", data.token);
 
-        authMessage.textContent = "Login Successful";
+        authMessage.textContent = "Login successful";
+        authMessage.className = "auth-success";
+        authBox.style.display = "none";
+        dashboard.style.display = "block";
 
         loginEmail.value = "";
         loginPassword.value = "";
@@ -629,6 +658,7 @@ retryButton.addEventListener("click", () => {
     getExpenses();
 })
 
+
 async function getExpenses() {
     loadingMessage.style.display = "block";
     errorMessage.style.display = "none";
@@ -661,4 +691,12 @@ async function getExpenses() {
     }
 }
 
-getExpenses();
+// getExpenses();
+
+const token = localStorage.getItem("token");
+
+if (token) {
+    authBox.style.display = "none";
+    dashboard.style.display = "block";
+    getExpenses();
+}
