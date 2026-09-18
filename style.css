@@ -498,6 +498,152 @@ input[type="number"]::-webkit-outer-spin-button {
     margin: 0;
 }
 
-input[type="number"] {
-    -moz-appearance: textfield;
+.ai-insights {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.ai-insights h2 {
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+
+#analyzeButton {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #4f46e5;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#analyzeButton:hover {
+    background: #4338ca;
+}
+
+#aiResult {
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+#aiResult {
+    margin-top: 20px;
+    padding: 18px;
+    background: #f8fafc;
+    border-radius: 12px;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+#aiResult p {
+    margin: 0;
+    color: #64748b;
+}
+
+#analyzeButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.ai-result-content {
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    color: #374151;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.ai-result-content strong {
+    color: #111827;
+    font-weight: 600;
+}
+
+.ai-card {
+    padding: 18px;
+    margin-top: 12px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.ai-card h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+}
+
+.ai-card p {
+    margin: 0;
+    color: #374151;
+}
+
+.ai-card ul {
+    margin: 8px 0 0;
+    padding-left: 20px;
+}
+
+.ai-card li {
+    margin-bottom: 6px;
+    color: #374151;
+}
+
+.ai-result-content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.ai-card {
+    margin-top: 0;
+}
+
+.ai-card:last-child {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+
+    .ai-result-content {
+        grid-template-columns: 1fr;
+    }
+
+    .ai-card:last-child {
+        grid-column: auto;
+    }
+
+}
+
+.ai-insights {
+    overflow: hidden;
+}
+
+.ai-insights h2 {
+    margin-bottom: 12px;
+}
+
+#analyzeButton {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#analyzeButton:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+
+.ai-result-content {
+    margin-top: 18px;
+}
+
+.ai-card h3 {
+    color: #111827;
+}
+
+.ai-card p,
+.ai-card li {
+    font-size: 14px;
 }

@@ -58,6 +58,9 @@ const authBox = document.querySelector(".auth-box");
 const dashboard = document.getElementById("dashboard");
 const logoutButton = document.getElementById("logoutButton");
 
+const analyzeButton = document.getElementById("analyzeButton");
+const aiResult = document.getElementById("aiResult");
+
 logoutButton.addEventListener("click", () => {
     localStorage.removeItem("token");
     location.reload();
@@ -701,3 +704,72 @@ if (token) {
     dashboard.style.display = "block";
     getExpenses();
 }
+
+analyzeButton.addEventListener("click", async () => {
+
+    aiResult.textContent = "Analyzing your spending...";
+
+    analyzeButton.disabled = true;
+    analyzeButton.textContent = "Analyzing...";
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:3000/expenses/analyze",
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            aiResult.textContent = data.message;
+            return;
+        }
+
+        aiResult.innerHTML = `
+            <div class="ai-card">
+                <h3>💰 Total Spending</h3>
+                <p>₹${data.insights.totalSpending}</p>
+            </div>
+
+            <div class="ai-card">
+                <h3>📊 Highest Spending Category</h3>
+                <p>${data.insights.highestCategory}</p>
+            </div>
+
+            <div class="ai-card">
+                <h3>💸 Highest Individual Expense</h3>
+                <p>${data.insights.highestExpense}</p>
+            </div>
+
+            <div class="ai-card">
+                <h3>🔎 Spending Pattern</h3>
+                <p>${data.insights.spendingPattern}</p>
+            </div>
+
+            <div class="ai-card">
+                <h3>💡 Saving Suggestions</h3>
+                <ul>
+                    <li>${data.insights.savingSuggestions[0]}</li>
+                    <li>${data.insights.savingSuggestions[1]}</li>
+                </ul>
+            </div>
+        `;
+
+    } catch (error) {
+
+        console.log(error);
+        aiResult.textContent = "Failed to analyze expenses";
+
+    } finally {
+
+        analyzeButton.disabled = false;
+        analyzeButton.textContent = "Analyze My Spending";
+    }
+});
+

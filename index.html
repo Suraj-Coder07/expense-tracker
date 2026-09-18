@@ -11,75 +11,55 @@
 
 <body>
 
-   <div class="auth-box">
+    <div class="auth-box">
 
-    <!-- Login Form -->
-    <div id="loginForm">
+        <!-- Login Form -->
+        <div id="loginForm">
 
-        <h2>Welcome Back</h2>
+            <h2>Welcome Back</h2>
 
-        <input
-            type="email"
-            id="loginEmail"
-            placeholder="Email"
-        >
+            <input type="email" id="loginEmail" placeholder="Email">
 
-        <input
-            type="password"
-            id="loginPassword"
-            placeholder="Password"
-        >
+            <input type="password" id="loginPassword" placeholder="Password">
 
-        <button id="loginButton">Login</button>
+            <button id="loginButton">Login</button>
 
-        <p>
-            Don't have an account?
-            <button id="showRegisterButton" type="button">
-                Register
-            </button>
-        </p>
+            <p>
+                Don't have an account?
+                <button id="showRegisterButton" type="button">
+                    Register
+                </button>
+            </p>
 
-    </div>
+        </div>
 
 
-    <!-- Register Form -->
-    <div id="registerForm" style="display: none;">
+        <!-- Register Form -->
+        <div id="registerForm" style="display: none;">
 
-        <h2>Create Account</h2>
+            <h2>Create Account</h2>
 
-        <input
-            type="text"
-            id="registerName"
-            placeholder="Your name"
-        >
+            <input type="text" id="registerName" placeholder="Your name">
 
-        <input
-            type="email"
-            id="registerEmail"
-            placeholder="Email"
-        >
+            <input type="email" id="registerEmail" placeholder="Email">
 
-        <input
-            type="password"
-            id="registerPassword"
-            placeholder="Password"
-        >
+            <input type="password" id="registerPassword" placeholder="Password">
 
-        <button id="registerButton">Register</button>
+            <button id="registerButton">Register</button>
 
-        <p>
-            Already have an account?
-            <button id="showLoginButton" type="button">
-                Login
-            </button>
-        </p>
+            <p>
+                Already have an account?
+                <button id="showLoginButton" type="button">
+                    Login
+                </button>
+            </p>
+
+        </div>
+
+
+        <p id="authMessage"></p>
 
     </div>
-
-
-    <p id="authMessage"></p>
-
-</div>
     <div class="container" id="dashboard" style="display: none;">
 
         <h1>Expense Tracker</h1>
@@ -148,6 +128,20 @@
 
         </div>
 
+        <!-- AI Spending Insights -->
+        <div class="ai-insights">
+
+            <h2>✨ AI Spending Insights</h2>
+
+            <button id="analyzeButton">
+                Analyze My Spending
+            </button>
+
+            <div id="aiResult">
+                <p>Click "Analyze My Spending" to get AI-powered insights.</p>
+            </div>
+
+        </div>
 
         <!-- Spending Summary -->
         <div class="summary-box">

@@ -8,6 +8,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("./middleware/authMiddleware");
 
+const { GoogleGenAI } = require("@google/genai");
+
+const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY
+})
+
 
 const app = express();
 
@@ -20,8 +26,6 @@ mongoose.connect(process.env.MONGO_URI)
     });
 
 
-const expenses = [];
-
 app.use(express.json())
 
 app.use(cors());
@@ -31,6 +35,7 @@ app.get("/", (req, res) => {
     console.log(req.url);
     res.send("Expense Tracker Backend is Working!");
 });
+
 
 app.get("/expenses", authMiddleware, async (req, res) => {
     try {
@@ -127,7 +132,6 @@ app.post("/expenses", authMiddleware, async (req, res) => {
             userId: req.userId
         });
 
-        console.log("MongoDB me save hua:", expense);
 
         res.status(201).json({
             message: "Expense saved successfully",
@@ -145,6 +149,113 @@ app.post("/expenses", authMiddleware, async (req, res) => {
 
         res.status(500).json({
             message: "Failed to save expense"
+        });
+    }
+});
+
+app.post("/expenses/analyze", authMiddleware, async (req, res) => {
+    try {
+        const expenses = await Expense.find({
+            userId: req.userId
+        });
+        if (expenses.length === 0) {
+            return res.status(400).json({
+                message: "No expenses  available for analysis"
+            });
+        }
+        const expenseData = expenses.map((expense) => ({
+            title: expense.title,
+            amount: expense.amount,
+            category: expense.category,
+            date: expense.date
+        }));
+
+        const prompt = `
+        You are a personal finance assistant.
+
+        Analyze the user's expenses below.
+         provide: 
+         1. Total spending
+         2. Highest spending category
+         3. Highest individual expense
+         4. Spending pattern  or observation 
+         5. Two practical saving suggestions
+
+         keep the answer simple and concise.
+         Do not invent any information.
+
+         Return the result as valid JSON with exactly these keys:
+        totalSpending,
+        highestCategory,
+        highestExpense,
+        spendingPattern,
+        savingSuggestions
+
+        savingSuggestions must be an array containing exactly two suggestions.
+        Do not use Markdown.
+        Return JSON only.
+
+         user expenses: 
+         ${JSON.stringify(expenseData)}
+        `;
+
+        let response;
+
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+                response = await ai.models.generateContent({
+                    model: "gemini-3.6-flash",
+                    contents: prompt
+                });
+                break;
+
+            } catch (error) {
+                if (error.status !== 503 || attempt === 3) {
+                    throw error;
+                }
+                await new Promise((resolve) => {
+                    setTimeout(resolve, attempt * 2000);
+                });
+            }
+        }
+
+        let responseText = response.text.trim();
+
+        responseText = responseText
+            .replace(/^```json\s*/i, "")
+            .replace(/^```\s*/i, "")
+            .replace(/\s*```$/i, "")
+            .trim();
+
+        let insights;
+        try {
+
+            insights = JSON.parse(responseText);
+
+        } catch (error) {
+
+            console.log("AI response JSON parse error:", error);
+
+            return res.status(500).json({
+                message: "AI returned an invalid response. Please try again."
+            });
+        }
+
+        res.status(200).json({
+            insights
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        if (error.status === 429) {
+            return res.status(429).json({
+                message: "AI quota reached for today. Please try again after the quota resets."
+            });
+        }
+
+        res.status(500).json({
+            message: "Failed to Analyze expenses"
         });
     }
 });
@@ -253,6 +364,8 @@ app.delete("/expenses", authMiddleware, async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
-    console.log("Server is running port 3000...")
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
