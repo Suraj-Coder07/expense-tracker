@@ -150,6 +150,7 @@ loginButton.addEventListener("click", async () => {
         authMessage.className = "auth-success";
         authBox.style.display = "none";
         dashboard.style.display = "block";
+        getExpenses();
 
         loginEmail.value = "";
         loginPassword.value = "";
