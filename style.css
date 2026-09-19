@@ -551,12 +551,17 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .ai-result-content {
+    margin-top: 18px;
     padding: 20px;
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     color: #374151;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
 }
 
 .ai-result-content strong {
@@ -593,11 +598,6 @@ input[type="number"]::-webkit-outer-spin-button {
     color: #374151;
 }
 
-.ai-result-content {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
 
 .ai-card {
     margin-top: 0;
@@ -635,9 +635,6 @@ input[type="number"]::-webkit-outer-spin-button {
     transform: translateY(-1px);
 }
 
-.ai-result-content {
-    margin-top: 18px;
-}
 
 .ai-card h3 {
     color: #111827;

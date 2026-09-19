@@ -734,34 +734,38 @@ analyzeButton.addEventListener("click", async () => {
         }
 
         aiResult.innerHTML = `
-            <div class="ai-card">
-                <h3>💰 Total Spending</h3>
-                <p>₹${data.insights.totalSpending}</p>
-            </div>
+    <div class="ai-result-content">
 
-            <div class="ai-card">
-                <h3>📊 Highest Spending Category</h3>
-                <p>${data.insights.highestCategory}</p>
-            </div>
+        <div class="ai-card">
+            <h3>💰 Total Spending</h3>
+            <p>₹${data.insights.totalSpending}</p>
+        </div>
 
-            <div class="ai-card">
-                <h3>💸 Highest Individual Expense</h3>
-                <p>${data.insights.highestExpense}</p>
-            </div>
+        <div class="ai-card">
+            <h3>📊 Highest Spending Category</h3>
+            <p>${data.insights.highestCategory}</p>
+        </div>
 
-            <div class="ai-card">
-                <h3>🔎 Spending Pattern</h3>
-                <p>${data.insights.spendingPattern}</p>
-            </div>
+        <div class="ai-card">
+            <h3>💸 Highest Individual Expense</h3>
+            <p>${data.insights.highestExpense}</p>
+        </div>
 
-            <div class="ai-card">
-                <h3>💡 Saving Suggestions</h3>
-                <ul>
-                    <li>${data.insights.savingSuggestions[0]}</li>
-                    <li>${data.insights.savingSuggestions[1]}</li>
-                </ul>
-            </div>
-        `;
+        <div class="ai-card">
+            <h3>🔎 Spending Pattern</h3>
+            <p>${data.insights.spendingPattern}</p>
+        </div>
+
+        <div class="ai-card">
+            <h3>💡 Saving Suggestions</h3>
+            <ul>
+                <li>${data.insights.savingSuggestions[0]}</li>
+                <li>${data.insights.savingSuggestions[1]}</li>
+            </ul>
+        </div>
+
+    </div>
+`;
 
     } catch (error) {
 
