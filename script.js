@@ -1,3 +1,5 @@
+const API_URL = "https://expense-tracker-bur3.onrender.com";
+
 const amountInput = document.getElementById('expenseAmount');
 const categoryInput = document.getElementById('expenseCategory');
 const titleInput = document.getElementById('expenseTitle');
@@ -88,7 +90,7 @@ registerButton.addEventListener("click", async () => {
     }
 
     try {
-        const response = await fetch("http://localhost:3000/register", {
+        const response = await fetch(`${API_URL}/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -130,7 +132,7 @@ loginButton.addEventListener("click", async () => {
     }
 
     try {
-        const response = await fetch("http://localhost:3000/login", {
+        const response = await fetch(`${API_URL}/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -449,7 +451,7 @@ function renderExpenses() {
 
             try {
 
-                const response = await fetch(`http://localhost:3000/expenses/${id}`, {
+                const response = await fetch(`${API_URL}/expenses/${id}`, {
                     method: "DELETE",
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -537,7 +539,7 @@ addExpense.addEventListener('click', async () => {
 
         try {
             const response = await fetch(
-                `http://localhost:3000/expenses/${editingExpenseId}`,
+                `${API_URL}/expenses/${editingExpenseId}`,
                 {
                     method: "PATCH",
                     headers: {
@@ -585,7 +587,7 @@ addExpense.addEventListener('click', async () => {
     }
 
     try {
-        const response = await fetch("http://localhost:3000/expenses", {
+        const response = await fetch(`${API_URL}/expenses`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -630,7 +632,7 @@ clearExpenses.addEventListener("click", async () => {
 
     try {
 
-        const response = await fetch("http://localhost:3000/expenses", {
+        const response = await fetch(`${API_URL}/expenses`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -667,7 +669,7 @@ async function getExpenses() {
     loadingMessage.style.display = "block";
     errorMessage.style.display = "none";
     try {
-        const response = await fetch("http://localhost:3000/expenses", {
+        const response = await fetch(`${API_URL}/expenses`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
             }
@@ -715,7 +717,7 @@ analyzeButton.addEventListener("click", async () => {
     try {
 
         const response = await fetch(
-            "http://localhost:3000/expenses/analyze",
+            `${API_URL}/expenses/analyze`,
             {
                 method: "POST",
                 headers: {
