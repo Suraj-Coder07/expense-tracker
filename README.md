@@ -8,6 +8,16 @@ Track, manage, filter, and analyze personal expenses while getting AI-powered sp
 
 https://expense-tracker-frontend-v54b.onrender.com
 
+## Screenshots
+
+### Dashboard
+
+![Expense Tracker Dashboard](expense-tracker-dashboard.png)
+
+### AI Spending Insights
+
+![AI Spending Insights](expense-tracker-ai-insights.png)
+
 ## Features
 
 * User registration and login
