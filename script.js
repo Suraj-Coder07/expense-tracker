@@ -63,8 +63,21 @@ const logoutButton = document.getElementById("logoutButton");
 const analyzeButton = document.getElementById("analyzeButton");
 const aiResult = document.getElementById("aiResult");
 
+const topUserName = document.getElementById("topUserName");
+const dashboardUserName = document.getElementById("dashboardUserName");
+
+function showUserName() {
+    const userName = localStorage.getItem("userName");
+
+    if (userName) {
+        topUserName.textContent = userName;
+        dashboardUserName.textContent = userName;
+    }
+}
+
 logoutButton.addEventListener("click", () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userName");
     location.reload();
 });
 
@@ -143,6 +156,7 @@ loginButton.addEventListener("click", async () => {
             })
         });
         const data = await response.json()
+        console.log("LOGIN RESPONSE:", data);
 
         if (!response.ok) {
             authMessage.textContent = data.message;
@@ -150,11 +164,13 @@ loginButton.addEventListener("click", async () => {
         }
 
         localStorage.setItem("token", data.token);
+        localStorage.setItem("userName", data.name);
 
         authMessage.textContent = "Login successful";
         authMessage.className = "auth-success";
         authBox.style.display = "none";
         dashboard.style.display = "block";
+        showUserName();
         getExpenses();
 
         loginEmail.value = "";
@@ -296,35 +312,82 @@ function updateCategorySummary() {
         return sum + Number(expense.amount);
     }, 0);
 
-    for (const [category, amount] of sortedCategories) {
+    const colors = [
+        "#4f46e5",
+        "#22c55e",
+        "#f59e0b",
+        "#ef4444",
+        "#06b6d4",
+        "#8b5cf6"
+    ];
 
-        const barContainer = document.createElement("div");
+    let currentPercentage = 0;
 
-        const bar = document.createElement("div");
+    const gradientParts = [];
 
-        const totalPercentage = ((amount / totalSpending) * 100).toFixed(1);
+    sortedCategories.forEach(function ([category, amount], index) {
 
-        const barPercentage = (amount / maxAmount) * 100;
+        const percentage = (amount / totalSpending) * 100;
 
-        bar.style.width = `${barPercentage}%`;
+        const color = colors[index % colors.length];
 
-        barContainer.textContent = category;
-        bar.textContent = `₹${amount.toFixed(2)} (${totalPercentage}%)`;
+        const start = currentPercentage;
+        const end = currentPercentage + percentage;
 
-        barContainer.appendChild(bar);
+        gradientParts.push(`${color} ${start}% ${end}%`);
 
-        categoryChart.appendChild(barContainer);
-    }
+        currentPercentage = end;
+    });
 
-    for (const [category, amount] of sortedCategories) {
+    const donut = document.createElement("div");
 
-        const categoryElement = document.createElement("p");
+    donut.className = "donut-chart";
 
-        categoryElement.textContent =
-            `${category}: ₹${amount.toFixed(2)}`;
+    donut.style.background =
+        `conic-gradient(${gradientParts.join(", ")})`;
 
-        categorySummary.appendChild(categoryElement);
-    }
+    const donutCenter = document.createElement("div");
+
+    donutCenter.className = "donut-center";
+
+    donutCenter.innerHTML = `
+    <span>Total</span>
+    <strong>₹${totalSpending.toFixed(0)}</strong>
+`;
+
+    donut.appendChild(donutCenter);
+
+    categoryChart.appendChild(donut);
+
+
+sortedCategories.forEach(function ([category, amount], index) {
+
+    const categoryElement = document.createElement("div");
+
+    categoryElement.className = "category-summary-item";
+
+    const colorDot = document.createElement("span");
+
+    colorDot.className = "category-color-dot";
+
+    colorDot.style.background =
+        colors[index % colors.length];
+
+    const categoryName = document.createElement("span");
+
+    categoryName.textContent = category;
+
+    const categoryAmount = document.createElement("strong");
+
+    categoryAmount.textContent =
+        `₹${amount.toFixed(2)}`;
+
+    categoryElement.appendChild(colorDot);
+    categoryElement.appendChild(categoryName);
+    categoryElement.appendChild(categoryAmount);
+
+    categorySummary.appendChild(categoryElement);
+});
 
 }
 
@@ -704,6 +767,7 @@ const token = localStorage.getItem("token");
 if (token) {
     authBox.style.display = "none";
     dashboard.style.display = "block";
+    showUserName();
     getExpenses();
 }
 
