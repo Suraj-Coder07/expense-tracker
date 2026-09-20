@@ -1,6 +1,8 @@
 # Expense Tracker
 
-A full-stack expense management web application that helps users track, manage, filter, and analyze their personal expenses with secure authentication and AI-powered spending insights.
+A full-stack AI-powered expense management application with JWT authentication, MongoDB, and AI-driven spending insights.
+
+Track, manage, filter, and analyze personal expenses while getting AI-powered spending patterns and personalized saving suggestions.
 
 ## Live Demo
 
