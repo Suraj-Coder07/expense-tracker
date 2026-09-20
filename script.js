@@ -360,34 +360,36 @@ function updateCategorySummary() {
     categoryChart.appendChild(donut);
 
 
-sortedCategories.forEach(function ([category, amount], index) {
+    sortedCategories.forEach(function ([category, amount], index) {
 
-    const categoryElement = document.createElement("div");
+        const categoryElement = document.createElement("div");
 
-    categoryElement.className = "category-summary-item";
+        categoryElement.className = "category-summary-item";
 
-    const colorDot = document.createElement("span");
+        const colorDot = document.createElement("span");
 
-    colorDot.className = "category-color-dot";
+        colorDot.className = "category-color-dot";
 
-    colorDot.style.background =
-        colors[index % colors.length];
+        colorDot.style.background =
+            colors[index % colors.length];
 
-    const categoryName = document.createElement("span");
+        const categoryName = document.createElement("span");
 
-    categoryName.textContent = category;
+        categoryName.textContent = category;
 
-    const categoryAmount = document.createElement("strong");
+        const categoryAmount = document.createElement("strong");
 
-    categoryAmount.textContent =
-        `₹${amount.toFixed(2)}`;
+        const percentage = ((amount / totalSpending) * 100).toFixed(1);
 
-    categoryElement.appendChild(colorDot);
-    categoryElement.appendChild(categoryName);
-    categoryElement.appendChild(categoryAmount);
+        categoryAmount.textContent =
+            `₹${amount.toFixed(2)} (${percentage}%)`;
 
-    categorySummary.appendChild(categoryElement);
-});
+        categoryElement.appendChild(colorDot);
+        categoryElement.appendChild(categoryName);
+        categoryElement.appendChild(categoryAmount);
+
+        categorySummary.appendChild(categoryElement);
+    });
 
 }
 
